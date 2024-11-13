@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { TodoProvider } from "./contexts";
 
@@ -37,6 +37,24 @@ function App() {
     );
   };
 
+  // it is possible then when we load/reload our app, there are todos in our local storage. to get those when our app loads we are using useEffect
+  // since local storage keeps values in string format, we are converting it into JSON format while gettng
+  useEffect(() => {
+    const todos = JSON.parse(localStorage.getItem("todos"));
+
+    if (todos && todos.length > 0) {
+      setTodos(todos);
+    }
+  }, []);
+  // the above useEffect will run only once when the components mount bcz humne enpty dependency array daala hai 
+
+
+// we are using another useeffect to save todos on change. the below useeffect runs everytime the todos state changes bcz of the dependency on [todos].
+// here we are saving the current state of todos to local storgae by converting it into JSON string. so jab bhi hum add/delete/edit/update krenge to humara todos ko updated rkhega ye 
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }, [todos])
+
   return (
     <TodoProvider
       value={{ todos, addTodo, updateTodo, deleteTodo, toggleComplete }}
@@ -46,9 +64,9 @@ function App() {
           <h1 className="text-2xl font-bold text-center mb-8 mt-2">
             Manage Your Todos
           </h1>
-          <div className="mb-4">{/* Todo form goes here */}</div>
+          <div className="mb-4">{/* yahn Todo form components jaayga */}</div>
           <div className="flex flex-wrap gap-y-3">
-            {/*Loop and Add TodoItem here */}
+            {/*yahn todo item loop lgakr add krenge */}
           </div>
         </div>
       </div>
