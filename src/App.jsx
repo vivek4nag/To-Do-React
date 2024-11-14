@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
-
 import { useState, useEffect } from "react";
 import "./App.css";
 import { TodoProvider } from "./contexts";
+import TodoForm from "./components/TodoForm";
+import TodoItem from "./components/TodoItem";
 
 function App() {
   // the following state will have all the todos
@@ -30,14 +30,14 @@ function App() {
   const toggleComplete = (id) => {
     setTodos((prev) =>
       prev.map((prevtodo) =>
-        prevtodo === id
+        prevtodo.id === id
           ? { ...prevtodo, completed: !prevtodo.completed }
           : prevtodo
       )
     );
   };
 
-  // it is possible then when we load/reload our app, there are todos in our local storage. to get those when our app loads we are using useEffect
+  // it is possible that when we load/reload our app, there are todos in our local storage. to get those when our app loads we are using useEffect
   // since local storage keeps values in string format, we are converting it into JSON format while gettng
   useEffect(() => {
     const todos = JSON.parse(localStorage.getItem("todos"));
@@ -46,14 +46,13 @@ function App() {
       setTodos(todos);
     }
   }, []);
-  // the above useEffect will run only once when the components mount bcz humne enpty dependency array daala hai 
+  // the above useEffect will run only once when the components mount bcz humne enpty dependency array daala hai
 
-
-// we are using another useeffect to save todos on change. the below useeffect runs everytime the todos state changes bcz of the dependency on [todos].
-// here we are saving the current state of todos to local storgae by converting it into JSON string. so jab bhi hum add/delete/edit/update krenge to humara todos ko updated rkhega ye 
+  // we are using another useeffect to save todos on change. the below useeffect runs everytime the todos state changes bcz of the dependency on [todos].
+  // here we are saving the current state of todos to local storgae by converting it into JSON string. so jab bhi hum add/delete/edit/update krenge to humara todos ko updated rkhega ye
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos))
-  }, [todos])
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   return (
     <TodoProvider
@@ -64,9 +63,17 @@ function App() {
           <h1 className="text-2xl font-bold text-center mb-8 mt-2">
             Manage Your Todos
           </h1>
-          <div className="mb-4">{/* yahn Todo form components jaayga */}</div>
+          <div className="mb-4">
+            {/* yahn Todo form components jaayga */}
+            <TodoForm/>
+            </div>
           <div className="flex flex-wrap gap-y-3">
-            {/*yahn todo item loop lgakr add krenge */}
+            {/*yahn todo item loop lgakr add kr rhe */}
+            {todos.map((todo) => (
+              <div key={todo.id} className="w-full">
+                <TodoItem todo={todo}/>
+              </div>
+            ))}
           </div>
         </div>
       </div>
